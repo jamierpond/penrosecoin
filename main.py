@@ -42,38 +42,38 @@ class PenroseTile:
 
     def get_vertices(self) -> np.ndarray:
         """Calculate vertices for the tile with margin"""
-        if self.tile_type == 'kite':
-            # Fat rhombus: 72° acute angles at top/bottom, 108° obtuse at sides
-            # Vertices positioned for unit edge length
-            half_angle = np.radians(36)  # Half of 72°
-            side_length = 1.0
+        # Both rhombi have the same edge length
+        edge_length = 1.0
 
-            # Distance from center to acute vertex
-            h1 = side_length * np.cos(half_angle)
-            # Distance from center to obtuse vertex
-            h2 = side_length * np.sin(half_angle)
+        if self.tile_type == 'kite':
+            # Fat rhombus: 72° acute angles, 108° obtuse angles
+            # For rhombus with all edges = a and acute angle α:
+            # Half-diagonal from center to acute vertex: d1 = a * sin((180-α)/2)
+            # Half-diagonal from center to obtuse vertex: d2 = a * sin(α/2)
+
+            acute = 72
+            d1 = edge_length * np.sin(np.radians((180 - acute) / 2))  # to obtuse vertices
+            d2 = edge_length * np.sin(np.radians(acute / 2))  # to acute vertices
 
             vertices = np.array([
-                [0, h1],           # Top (acute 72°)
-                [h2, 0],           # Right (obtuse 108°)
-                [0, -h1],          # Bottom (acute 72°)
-                [-h2, 0],          # Left (obtuse 108°)
+                [0, d2],           # Top (acute 72°)
+                [d1, 0],           # Right (obtuse 108°)
+                [0, -d2],          # Bottom (acute 72°)
+                [-d1, 0],          # Left (obtuse 108°)
             ])
         else:  # dart
-            # Thin rhombus: 36° acute angles at top/bottom, 144° obtuse at sides
-            half_angle = np.radians(18)  # Half of 36°
-            side_length = 1.0
+            # Thin rhombus: 36° acute angles, 144° obtuse angles
+            # Same edge length as kite, different angles
 
-            # Distance from center to acute vertex
-            h1 = side_length * np.cos(half_angle)
-            # Distance from center to obtuse vertex
-            h2 = side_length * np.sin(half_angle)
+            acute = 36
+            d1 = edge_length * np.sin(np.radians((180 - acute) / 2))  # to obtuse vertices
+            d2 = edge_length * np.sin(np.radians(acute / 2))  # to acute vertices
 
             vertices = np.array([
-                [0, h1],           # Top (acute 36°)
-                [h2, 0],           # Right (obtuse 144°)
-                [0, -h1],          # Bottom (acute 36°)
-                [-h2, 0],          # Left (obtuse 144°)
+                [0, d2],           # Top (acute 36°)
+                [d1, 0],           # Right (obtuse 144°)
+                [0, -d2],          # Bottom (acute 36°)
+                [-d1, 0],          # Left (obtuse 144°)
             ])
 
         # Apply margin by shrinking towards centroid
@@ -131,10 +131,10 @@ class PenroseCoin:
             # Position at center, rotated so acute angle points to center
             self.add_tile('kite', (0, 0), angle + 90)
 
-        # 5 thin rhombi (darts/red) - acute angles at center, between the fat ones
-        for i in range(5):
-            angle = i * angle_step + angle_step / 2  # Offset by 36°
-            self.add_tile('dart', (0, 0), angle + 90)
+#         # 5 thin rhombi (darts/red) - acute angles at center, between the fat ones
+#         for i in range(5):
+#             angle = i * angle_step + angle_step / 2  # Offset by 36°
+#             self.add_tile('dart', (0, 0), angle + 90)
 
     def create_pattern_from_spec(self, tile_specs: List[Tuple[str, Tuple[float, float], float]]):
         """Create pattern from list of (type, center, angle) specifications"""
