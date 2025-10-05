@@ -9,13 +9,13 @@ from typing import List, Tuple
 class TileParams:
     """Parameters for Penrose tiling"""
     scale: float = 1.0
-    margin: float = 0.02  # Gap between tiles
+    margin: float = 0.00  # Gap between tiles
     green_color: str = '#00A000'
     red_color: str = '#D00000'
     purple_color: str = '#8800FF'
     background_color: str = '#FFFFFF'
     edge_color: str = '#DDDDDD'
-    edge_width: float = 2.0
+    edge_width: float = 0.0
 
 
 class PenroseTile:
@@ -107,7 +107,9 @@ class PenroseCoin:
         # Geometric constants based on the golden ratio for the fat rhombus
         edge_length = 1.0
         acute_angle = 72
-        d1 = edge_length * np.cos(np.radians(acute_angle / 2))  # cos(36)
+
+        some_factor_i_dont_understand = 1 / np.sqrt(np.pi / 2)
+        d1 = some_factor_i_dont_understand * np.cos(np.radians(acute_angle))  # cos(36)
 
         # Define the pattern as a list of tiles (type, center, angle)
         # The pattern is constructed from layers, starting from a central star.
@@ -126,35 +128,6 @@ class PenroseCoin:
             center = center_vec @ rotation.T
 
             self.add_tile(central_colors[i], tuple(center), angle)
-
-#         # Layer 2: Middle Belt (5 "purple" rhombi)
-#         # These are positioned relative to the central star
-#         for i in range(5):
-#             angle = 54 - i * 72
-#             # This center calculation is derived from geometric construction
-#             center_vec = np.array([2 * d1 * np.cos(np.radians(36)), 0])
-#
-#             rot_rad = np.radians(angle + 18) # Additional rotation for positioning
-#             rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
-#                                  [np.sin(rot_rad), np.cos(rot_rad)]])
-#             center = center_vec @ rotation.T
-#
-#             self.add_tile('purple', tuple(center), angle)
-#
-#         # Layer 3: Outer Belt (5 rhombi)
-#         outer_colors = ['green', 'red', 'green', 'red', 'green'] # Symmetrical coloring
-#         for i in range(5):
-#             angle = 90 - i * 72
-#             # Positioned further out
-#             center_vec = np.array([d1 + 2 * d1 * np.cos(np.radians(72)),
-#                                    2 * d1 * np.sin(np.radians(72))])
-#
-#             rot_rad = np.radians(angle - 90)
-#             rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
-#                                  [np.sin(rot_rad), np.cos(rot_rad)]])
-#             center = center_vec @ rotation.T
-#
-#             self.add_tile(outer_colors[i], tuple(center), angle)
 
 
     def plot(self, figsize: Tuple[int, int] = (10, 10),
@@ -194,10 +167,10 @@ class PenroseCoin:
 if __name__ == "__main__":
     # Create coin with custom parameters
     params = TileParams(
-        scale=0.4,
-        margin=0.015,
-        edge_color='#FFFFFF',
-        edge_width=2.5
+        scale=0.3,
+        margin=0.00,
+        edge_color='#000000',
+        edge_width=0.0
     )
 
     coin = PenroseCoin(params)
