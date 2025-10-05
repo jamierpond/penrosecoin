@@ -1,10 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
-from matplotlib.collections import PatchCollection
 from dataclasses import dataclass
 from typing import List, Tuple
-import math
 
 
 @dataclass
@@ -12,25 +10,21 @@ class TileParams:
     """Parameters for Penrose tiling"""
     scale: float = 1.0
     margin: float = 0.02  # Gap between tiles
-    inner_radius: float = 1.5  # Distance from center to inner rhombi
-    outer_radius: float = 3.5  # Distance from center to outer rhombi
-    kite_color: str = '#00FF00'  # Green (rhombus/kite)
-    dart_color: str = '#FF0000'  # Red (dart)
-    background_color: str = '#8800FF'  # Purple
-    edge_color: str = '#DDDDDD'  # Light gray
+    green_color: str = '#00A000'
+    red_color: str = '#D00000'
+    purple_color: str = '#8800FF'
+    background_color: str = '#FFFFFF'
+    edge_color: str = '#DDDDDD'
     edge_width: float = 2.0
 
 
 class PenroseTile:
-    """Represents a single Penrose tile (kite or dart)"""
-
-    # Golden ratio
-    PHI = (1 + np.sqrt(5)) / 2
+    """Represents a single Penrose tile (always a fat rhombus for this pattern)"""
 
     def __init__(self, tile_type: str, center: Tuple[float, float],
                  angle: float, params: TileParams):
         """
-        tile_type: 'kite' or 'dart'
+        tile_type: 'green', 'red', or 'purple'
         center: (x, y) position
         angle: rotation in degrees
         params: TileParams object
@@ -42,39 +36,22 @@ class PenroseTile:
 
     def get_vertices(self) -> np.ndarray:
         """Calculate vertices for the tile with margin"""
-        # Both rhombi have the same edge length
+        # All tiles are fat rhombi: 72° acute angles, 108° obtuse angles
         edge_length = 1.0
+        acute = 72
+        
+        # Half-diagonal from center to obtuse vertex
+        d1 = edge_length * np.cos(np.radians(acute / 2))  # cos(36)
+        # Half-diagonal from center to acute vertex
+        d2 = edge_length * np.sin(np.radians(acute / 2))  # sin(36)
 
-        if self.tile_type == 'kite':
-            # Fat rhombus: 72° acute angles, 108° obtuse angles
-            # For rhombus with all edges = a and acute angle α:
-            # Half-diagonal from center to acute vertex: d1 = a * sin((180-α)/2)
-            # Half-diagonal from center to obtuse vertex: d2 = a * sin(α/2)
-
-            acute = 72
-            d1 = edge_length * np.sin(np.radians((180 - acute) / 2))  # to obtuse vertices
-            d2 = edge_length * np.sin(np.radians(acute / 2))  # to acute vertices
-
-            vertices = np.array([
-                [0, d2],           # Top (acute 72°)
-                [d1, 0],           # Right (obtuse 108°)
-                [0, -d2],          # Bottom (acute 72°)
-                [-d1, 0],          # Left (obtuse 108°)
-            ])
-        else:  # dart
-            # Thin rhombus: 36° acute angles, 144° obtuse angles
-            # Same edge length as kite, different angles
-
-            acute = 36
-            d1 = edge_length * np.sin(np.radians((180 - acute) / 2))  # to obtuse vertices
-            d2 = edge_length * np.sin(np.radians(acute / 2))  # to acute vertices
-
-            vertices = np.array([
-                [0, d2],           # Top (acute 36°)
-                [d1, 0],           # Right (obtuse 144°)
-                [0, -d2],          # Bottom (acute 36°)
-                [-d1, 0],          # Left (obtuse 144°)
-            ])
+        # Canonical rhombus with long diagonal on x-axis
+        vertices = np.array([
+            [d1, 0],      # Right (obtuse)
+            [0, d2],      # Top (acute)
+            [-d1, 0],     # Left (obtuse)
+            [0, -d2],     # Bottom (acute)
+        ])
 
         # Apply margin by shrinking towards centroid
         if self.params.margin > 0:
@@ -100,7 +77,12 @@ class PenroseTile:
     def get_polygon(self) -> Polygon:
         """Get matplotlib Polygon object"""
         vertices = self.get_vertices()
-        color = self.params.kite_color if self.tile_type == 'kite' else self.params.dart_color
+        color_map = {
+            'green': self.params.green_color,
+            'red': self.params.red_color,
+            'purple': self.params.purple_color,
+        }
+        color = color_map.get(self.tile_type, '#000000')
         return Polygon(vertices, facecolor=color, edgecolor=self.params.edge_color,
                       linewidth=self.params.edge_width)
 
@@ -118,29 +100,62 @@ class PenroseCoin:
         self.tiles.append(tile)
         return tile
 
-    def create_radial_pattern(self):
-        """Create exact pattern: 5 fat rhombi (green) + 5 thin rhombi (red) = 10 total
-        All tiles meet at center with acute angles pointing inward"""
+    def create_pattern(self):
+        """Creates the 2D projection of the rhombic triacontahedron"""
         self.tiles = []
+        
+        # Geometric constants based on the golden ratio for the fat rhombus
+        edge_length = 1.0
+        acute_angle = 72
+        d1 = edge_length * np.cos(np.radians(acute_angle / 2))  # cos(36)
 
-        angle_step = 72  # 360 / 5
-
-        # 5 fat rhombi (kites/green) - acute angles at center
+        # Define the pattern as a list of tiles (type, center, angle)
+        # The pattern is constructed from layers, starting from a central star.
+        
+        # Layer 1: Central Star (5 rhombi)
+        # Colors are ordered to match the image, starting from the top and going clockwise.
+        central_colors = ['green', 'red', 'green', 'green', 'red']
         for i in range(5):
-            angle = i * angle_step
-            # Position at center, rotated so acute angle points to center
-            self.add_tile('kite', (0, 0), angle + 90)
+            angle = 90 - i * 72
+            center_vec = np.array([d1, 0])
+            
+            # Rotate the center vector to position each rhombus of the star
+            rot_rad = np.radians(angle)
+            rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
+                                 [np.sin(rot_rad), np.cos(rot_rad)]])
+            center = center_vec @ rotation.T
+            
+            self.add_tile(central_colors[i], tuple(center), angle)
 
-#         # 5 thin rhombi (darts/red) - acute angles at center, between the fat ones
-#         for i in range(5):
-#             angle = i * angle_step + angle_step / 2  # Offset by 36°
-#             self.add_tile('dart', (0, 0), angle + 90)
+        # Layer 2: Middle Belt (5 "purple" rhombi)
+        # These are positioned relative to the central star
+        for i in range(5):
+            angle = 54 - i * 72
+            # This center calculation is derived from geometric construction
+            center_vec = np.array([2 * d1 * np.cos(np.radians(36)), 0])
+            
+            rot_rad = np.radians(angle + 18) # Additional rotation for positioning
+            rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
+                                 [np.sin(rot_rad), np.cos(rot_rad)]])
+            center = center_vec @ rotation.T
 
-    def create_pattern_from_spec(self, tile_specs: List[Tuple[str, Tuple[float, float], float]]):
-        """Create pattern from list of (type, center, angle) specifications"""
-        self.tiles = []
-        for tile_type, center, angle in tile_specs:
-            self.add_tile(tile_type, center, angle)
+            self.add_tile('purple', tuple(center), angle)
+
+        # Layer 3: Outer Belt (5 rhombi)
+        outer_colors = ['green', 'red', 'green', 'red', 'green'] # Symmetrical coloring
+        for i in range(5):
+            angle = 90 - i * 72
+            # Positioned further out
+            center_vec = np.array([d1 + 2 * d1 * np.cos(np.radians(72)), 
+                                   2 * d1 * np.sin(np.radians(72))])
+
+            rot_rad = np.radians(angle - 90)
+            rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
+                                 [np.sin(rot_rad), np.cos(rot_rad)]])
+            center = center_vec @ rotation.T
+            
+            self.add_tile(outer_colors[i], tuple(center), angle)
+
 
     def plot(self, figsize: Tuple[int, int] = (10, 10),
              show_grid: bool = False, show_background: bool = True):
@@ -161,7 +176,7 @@ class PenroseCoin:
             all_vertices.extend(tile.get_vertices())
         if all_vertices:
             vertices_array = np.array(all_vertices)
-            max_coord = np.max(np.abs(vertices_array)) * 1.2
+            max_coord = np.max(np.abs(vertices_array)) * 1.1
             ax.set_xlim(-max_coord, max_coord)
             ax.set_ylim(-max_coord, max_coord)
 
@@ -172,7 +187,7 @@ class PenroseCoin:
         else:
             ax.axis('off')
 
-        plt.title('Penrose Challenge Coin Design', fontsize=16, pad=20)
+        plt.title('Penrose Pattern Coin Design', fontsize=16, pad=20)
         plt.tight_layout()
 
         return fig, ax
@@ -182,35 +197,21 @@ class PenroseCoin:
 if __name__ == "__main__":
     # Create coin with custom parameters
     params = TileParams(
-        scale=1.2,
-        margin=0.03,
-        inner_radius=1.0,  # Closer together - distance from center to inner rhombi
-        outer_radius=2.2,  # Closer together - distance from center to outer rhombi
-        kite_color='#00FF00',
-        dart_color='#FF0000',
-        background_color='#8800FF',
+        scale=0.4,
+        margin=0.015,
         edge_color='#FFFFFF',
         edge_width=2.5
     )
 
     coin = PenroseCoin(params)
 
-    # Create the exact pattern: 5 inner + 5 outer fat rhombi + 10 thin rhombi
-    coin.create_radial_pattern()
+    # Create the exact pattern from the image
+    coin.create_pattern()
 
-    # Option 2: Manually specify tiles (commented out)
-    # custom_tiles = [
-    #     ('kite', (0, 1), 0),
-    #     ('dart', (1.5, 0), 45),
-    #     ('kite', (0, -1), 180),
-    #     ('dart', (-1.5, 0), 225),
-    # ]
-    # coin.create_pattern_from_spec(custom_tiles)
-
-    # Plot and save (no interactive window)
+    # Plot and show
     fig, ax = coin.plot(figsize=(12, 12), show_grid=False, show_background=True)
-    plt.savefig('penrose_coin.png', dpi=300, bbox_inches='tight', facecolor='white')
-    plt.close()
+    plt.savefig('penrose_coin.png', dpi=300, bbox_inches='tight', facecolor=params.background_color)
+    plt.show()
 
     print("Coin design saved to 'penrose_coin.png'")
     print(f"Number of tiles: {len(coin.tiles)}")

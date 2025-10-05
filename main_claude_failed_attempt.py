@@ -118,30 +118,37 @@ class PenroseCoin:
 
     def create_radial_pattern(self):
         """Create exact pattern matching reference image:
-        - 5 green fat rhombi forming pentagon in center (OBTUSE angles meet at center)
-        - Additional tiles around them
+        - 5 green fat rhombi forming pentagon in center
+        - Pentagon vertices are where the rhombi meet at their obtuse angles
         """
         self.tiles = []
 
         angle_step = 72  # 360 / 5
 
-        # 5 fat rhombi (kites/green) forming a pentagon
-        # In the reference, they meet at the CENTER with their OBTUSE (108°) angles
-        # So the acute (72°) angles point OUTWARD
-        for i in range(5):
-            angle = i * angle_step
-            # Rotate so OBTUSE angle points to center (acute points out)
-            self.add_tile('kite', (0, 0), angle - 90)
+        # Calculate pentagon vertices (where obtuse angles of rhombi meet)
+        pentagon_radius = self.params.inner_radius
 
-        # Uncomment for red rhombi
-        # # 5 thin rhombi (darts/red) - positioned between the green ones
-        # for i in range(5):
-        #     angle = i * angle_step + angle_step / 2  # Offset by 36°
-        #     # Position them outward from center
-        #     offset = 1.0  # Adjust this to position correctly
-        #     x = offset * np.cos(np.radians(angle))
-        #     y = offset * np.sin(np.radians(angle))
-        #     self.add_tile('dart', (x, y), angle + 90)
+        # Each fat rhombus connects two adjacent pentagon vertices
+        # The rhombus edges form the pentagon sides
+        for i in range(5):
+            # Two adjacent vertices of the pentagon
+            angle1 = i * angle_step
+            angle2 = (i + 1) * angle_step
+
+            v1_x = pentagon_radius * np.cos(np.radians(angle1))
+            v1_y = pentagon_radius * np.sin(np.radians(angle1))
+            v2_x = pentagon_radius * np.cos(np.radians(angle2))
+            v2_y = pentagon_radius * np.sin(np.radians(angle2))
+
+            # Center of this rhombus is at the midpoint of the pentagon edge
+            center_x = (v1_x + v2_x) / 2
+            center_y = (v1_y + v2_y) / 2
+
+            # Angle of the rhombus: perpendicular to the line from origin to midpoint
+            midpoint_angle = np.degrees(np.arctan2(center_y, center_x))
+
+            # The rhombus should be oriented so one axis points radially outward
+            self.add_tile('kite', (center_x, center_y), midpoint_angle)
 
     def create_pattern_from_spec(self, tile_specs: List[Tuple[str, Tuple[float, float], float]]):
         """Create pattern from list of (type, center, angle) specifications"""
