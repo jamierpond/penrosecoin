@@ -39,7 +39,7 @@ class PenroseTile:
         # All tiles are fat rhombi: 72° acute angles, 108° obtuse angles
         edge_length = 1.0
         acute = 72
-        
+
         # Half-diagonal from center to obtuse vertex
         d1 = edge_length * np.cos(np.radians(acute / 2))  # cos(36)
         # Half-diagonal from center to acute vertex
@@ -103,7 +103,7 @@ class PenroseCoin:
     def create_pattern(self):
         """Creates the 2D projection of the rhombic triacontahedron"""
         self.tiles = []
-        
+
         # Geometric constants based on the golden ratio for the fat rhombus
         edge_length = 1.0
         acute_angle = 72
@@ -111,50 +111,50 @@ class PenroseCoin:
 
         # Define the pattern as a list of tiles (type, center, angle)
         # The pattern is constructed from layers, starting from a central star.
-        
+
         # Layer 1: Central Star (5 rhombi)
         # Colors are ordered to match the image, starting from the top and going clockwise.
         central_colors = ['green', 'red', 'green', 'green', 'red']
         for i in range(5):
             angle = 90 - i * 72
             center_vec = np.array([d1, 0])
-            
+
             # Rotate the center vector to position each rhombus of the star
             rot_rad = np.radians(angle)
             rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
                                  [np.sin(rot_rad), np.cos(rot_rad)]])
             center = center_vec @ rotation.T
-            
+
             self.add_tile(central_colors[i], tuple(center), angle)
 
-        # Layer 2: Middle Belt (5 "purple" rhombi)
-        # These are positioned relative to the central star
-        for i in range(5):
-            angle = 54 - i * 72
-            # This center calculation is derived from geometric construction
-            center_vec = np.array([2 * d1 * np.cos(np.radians(36)), 0])
-            
-            rot_rad = np.radians(angle + 18) # Additional rotation for positioning
-            rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
-                                 [np.sin(rot_rad), np.cos(rot_rad)]])
-            center = center_vec @ rotation.T
-
-            self.add_tile('purple', tuple(center), angle)
-
-        # Layer 3: Outer Belt (5 rhombi)
-        outer_colors = ['green', 'red', 'green', 'red', 'green'] # Symmetrical coloring
-        for i in range(5):
-            angle = 90 - i * 72
-            # Positioned further out
-            center_vec = np.array([d1 + 2 * d1 * np.cos(np.radians(72)), 
-                                   2 * d1 * np.sin(np.radians(72))])
-
-            rot_rad = np.radians(angle - 90)
-            rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
-                                 [np.sin(rot_rad), np.cos(rot_rad)]])
-            center = center_vec @ rotation.T
-            
-            self.add_tile(outer_colors[i], tuple(center), angle)
+#         # Layer 2: Middle Belt (5 "purple" rhombi)
+#         # These are positioned relative to the central star
+#         for i in range(5):
+#             angle = 54 - i * 72
+#             # This center calculation is derived from geometric construction
+#             center_vec = np.array([2 * d1 * np.cos(np.radians(36)), 0])
+#
+#             rot_rad = np.radians(angle + 18) # Additional rotation for positioning
+#             rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
+#                                  [np.sin(rot_rad), np.cos(rot_rad)]])
+#             center = center_vec @ rotation.T
+#
+#             self.add_tile('purple', tuple(center), angle)
+#
+#         # Layer 3: Outer Belt (5 rhombi)
+#         outer_colors = ['green', 'red', 'green', 'red', 'green'] # Symmetrical coloring
+#         for i in range(5):
+#             angle = 90 - i * 72
+#             # Positioned further out
+#             center_vec = np.array([d1 + 2 * d1 * np.cos(np.radians(72)),
+#                                    2 * d1 * np.sin(np.radians(72))])
+#
+#             rot_rad = np.radians(angle - 90)
+#             rotation = np.array([[np.cos(rot_rad), -np.sin(rot_rad)],
+#                                  [np.sin(rot_rad), np.cos(rot_rad)]])
+#             center = center_vec @ rotation.T
+#
+#             self.add_tile(outer_colors[i], tuple(center), angle)
 
 
     def plot(self, figsize: Tuple[int, int] = (10, 10),
