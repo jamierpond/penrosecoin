@@ -162,9 +162,6 @@ class PenroseCoin:
         """Plot the coin design"""
         fig, ax = plt.subplots(figsize=figsize)
 
-        if show_background:
-            ax.set_facecolor(self.params.background_color)
-
         # Draw tiles
         for tile in self.tiles:
             polygon = tile.get_polygon()
@@ -209,7 +206,7 @@ if __name__ == "__main__":
     coin.create_pattern()
 
     # Plot and show
-    fig, ax = coin.plot(figsize=(12, 12), show_grid=False, show_background=True)
+    fig, ax = coin.plot(figsize=(12, 12), show_grid=False)
     plt.savefig('penrose_coin.png', dpi=300, bbox_inches='tight', facecolor=params.background_color)
     plt.show()
 
