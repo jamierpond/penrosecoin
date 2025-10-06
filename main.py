@@ -133,6 +133,6 @@ def get_penrose_coin_shapes(
     # Create decagon background (drawn first, so it appears behind)
     # the outer radius should be half the pipe width
     decagon_sf = 1.0
-    decagon = get_decagon_vertices(center=(0.0, 0.0), scale_factor=decagon_sf)
+    decagon = get_decagon_vertices(scale_factor=decagon_sf)
 
     return decagon, kites, darts

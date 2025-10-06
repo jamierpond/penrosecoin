@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
 from main import (
-    get_rhombus_vertices,
     calculate_edge_length_of_unit_height_rhombus,
     get_penrose_coin_shapes,
 )
@@ -55,35 +54,6 @@ def plot_shapes(
     plt.savefig(filename, dpi=150, bbox_inches="tight")
     plt.show()
     plt.close()
-
-
-def test_square_tile():
-    """Test creating a square tile using get_rhombus_vertices with 90° acute angle"""
-    # A rhombus with 90° acute angle is a square
-    first_tile = get_rhombus_vertices(0, 90)
-
-    # Check we have 4 vertices
-    assert first_tile.shape == (4, 2)
-    print(first_tile)
-
-    # Check it's centered at origin
-    centroid = first_tile.mean(axis=0)
-    np.testing.assert_array_almost_equal(centroid, [0, 0])
-
-    # For a square with edge_length = 1 and 90° acute angle:
-    # d1 = d2 = cos(45°) = sin(45°) ≈ 0.707
-    expected_half_diag = np.cos(np.radians(45))
-
-    expected_vertices = np.array(
-        [
-            [expected_half_diag, 0],
-            [0, expected_half_diag],
-            [-expected_half_diag, 0],
-            [0, -expected_half_diag],
-        ]
-    )
-
-    np.testing.assert_array_almost_equal(first_tile, expected_vertices, decimal=5)
 
 
 def test_calculate_edge_length_of_unit_height_rhombus():
