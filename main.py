@@ -2,6 +2,16 @@ import numpy as np
 from typing import Tuple
 
 
+def rotate_shape_about_origin(vertices: np.ndarray, angle: float) -> np.ndarray:
+    """Rotate vertices about the origin by the given angle in degrees"""
+    angle_rad = np.radians(angle)
+    rotation = np.array([
+        [np.cos(angle_rad), -np.sin(angle_rad)],
+        [np.sin(angle_rad), np.cos(angle_rad)]
+    ])
+    return vertices @ rotation.T
+
+
 def get_rhombus_vertices(
     center: Tuple[float, float],
     angle: float,
@@ -34,15 +44,8 @@ def get_rhombus_vertices(
     center_array = np.array(center)
     vertices += center_array
 
-    # we need an additional rotation about the origin here by `angle`
-    # TODO
-
-    angle_rad = np.radians(angle)
-    rotation = np.array([
-            [np.cos(angle_rad), -np.sin(angle_rad)],
-            [np.sin(angle_rad), np.cos(angle_rad)]
-    ])
-    vertices = vertices @ rotation.T
+    # Rotate about the origin by `angle`
+    vertices = rotate_shape_about_origin(vertices, angle)
 
     return vertices
 
