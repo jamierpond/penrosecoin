@@ -56,9 +56,10 @@ def test_square_tile():
 
     np.testing.assert_array_almost_equal(first_tile, expected_vertices, decimal=5)
 
+
 def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
     alpha = acute_angle / 2
-    return 2 * np.cos(np.radians(alpha))
+    return 0.5 / np.cos(np.radians(alpha))
 
 
 def test_calculate_edge_length_of_unit_height_rhombus():
@@ -74,19 +75,22 @@ def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
     scale_factor = 1.0
 
-    acute_angle = 72
-    obtuse_angle = 180 - acute_angle  # 108 degrees
+    ft_acute_angle = 72
+    ft_obtuse_angle = 180 - ft_acute_angle  # 108 degrees
 
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, obtuse_angle, scale_factor=scale_factor)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, obtuse_angle, scale_factor=scale_factor)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, obtuse_angle, scale_factor=scale_factor)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, obtuse_angle, scale_factor=scale_factor)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, obtuse_angle, scale_factor=scale_factor)
+    st_acute_angle = 36
+    st_obtuse_angle = 180 - st_acute_angle  # 144 degrees
 
-    edge_length = calculate_edge_length_of_unit_height_rhombus(acute_angle)
+    first_tile = get_rhombus_vertices((0.0, 0.5), 0, ft_obtuse_angle, scale_factor=scale_factor)
+    second_tile = get_rhombus_vertices((0.0, 0.5), 72, ft_obtuse_angle, scale_factor=scale_factor)
+    third_tile = get_rhombus_vertices((0.0, 0.5), 144, ft_obtuse_angle, scale_factor=scale_factor)
+    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, ft_obtuse_angle, scale_factor=scale_factor)
+    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, ft_obtuse_angle, scale_factor=scale_factor)
 
+    edge_length = calculate_edge_length_of_unit_height_rhombus(ft_acute_angle)
+    print(f"edge_length: {edge_length}")
 
-    dart_long_length = edge_length * np.cos(np.radians(acute_angle / 2))
+    dart_long_length = 2 * edge_length * np.cos(np.radians(st_acute_angle / 2))  # long edge of dart
     dart_sf = dart_long_length * scale_factor
 
     first_dart = get_rhombus_vertices((0.0, 0.85), 36, 144, scale_factor=dart_sf, initial_rotation=90)
