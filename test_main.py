@@ -60,7 +60,7 @@ def plot_shapes(
 def test_square_tile():
     """Test creating a square tile using get_rhombus_vertices with 90° acute angle"""
     # A rhombus with 90° acute angle is a square
-    first_tile = get_rhombus_vertices((0, 0), 0, 90)
+    first_tile = get_rhombus_vertices(0, 90)
 
     # Check we have 4 vertices
     assert first_tile.shape == (4, 2)
