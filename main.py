@@ -41,7 +41,7 @@ def get_rhombus_vertices(
     ])
 
     # Normalize vertical height (before rotation)
-    actual_height = 2 * d2  # vertical height of unrotated rhombus
+    actual_height = 2 * d1  # vertical height of unrotated rhombus
     height_scale = height / actual_height
     vertices *= height_scale
 
