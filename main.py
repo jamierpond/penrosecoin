@@ -36,21 +36,20 @@ def get_decagon_vertices(
 
 
 def get_rhombus_vertices(
-    angle: float,
-    acute_angle: float,
-    height: float = 1.0,
-    init_translation: Tuple[float, float] = (0.0, 0.0),
-    initial_rotation: float = 0.0,
+    obtuse_interior_angle: float,
     scale_factor: float = 1.0,
+    post_translation_rotation: float = 0.0,
+    translation: Tuple[float, float] = (0.0, 0.0),
+    pre_translation_rotation: float = 0.0,
 ) -> np.ndarray:
     """Calculate vertices for a rhombus with specified acute angle"""
     edge_length = 1.0
 
     # Half-diagonal from center to obtuse vertex
-    d1 = edge_length * np.cos(np.radians(acute_angle / 2))
+    d1 = edge_length * np.cos(np.radians(obtuse_interior_angle / 2))
 
     # Half-diagonal from center to acute vertex
-    d2 = edge_length * np.sin(np.radians(acute_angle / 2))
+    d2 = edge_length * np.sin(np.radians(obtuse_interior_angle / 2))
 
     # Canonical rhombus with long diagonal on x-axis
     vertices = np.array(
@@ -64,17 +63,14 @@ def get_rhombus_vertices(
 
     # Normalize vertical height (before rotation)
     actual_height = 2 * d2  # vertical height of unrotated rhombus
-    height_scale = height / actual_height
+    height_scale = 1.0 / actual_height
     vertices *= height_scale * scale_factor
+    vertices = rotate_shape_about_origin(vertices, pre_translation_rotation)
 
-    vertices = rotate_shape_about_origin(vertices, initial_rotation)
+    translation_array = np.array(translation)
+    vertices += translation_array
 
-    # Translate to center
-    center_array = np.array(init_translation)
-    vertices += center_array
-
-    # Rotate about the origin by `angle`
-    vertices = rotate_shape_about_origin(vertices, angle)
+    vertices = rotate_shape_about_origin(vertices, post_translation_rotation)
 
     return vertices
 
@@ -105,10 +101,11 @@ def get_penrose_coin_shapes(
 
     kites = [
         get_rhombus_vertices(
-            i * 72,
             KITE_OBTUSE_ANGLE,
             scale_factor=scale_factor,
-            init_translation=KITE_TRANSLATION_UP,
+            translation=KITE_TRANSLATION_UP,
+            pre_translation_rotation=0.0,
+            post_translation_rotation=i * 72,
         )
         for i in range(5)
     ]
@@ -118,13 +115,11 @@ def get_penrose_coin_shapes(
     dart_translation_up = (0.0, dart_center)
     darts = [
         get_rhombus_vertices(
-            36 + i * 72,
             DART_OBTUSE_ANGLE,
             scale_factor=dart_sf,
-            # darts need an initial 90 degrees so their
-            # long axis is horizontal before rotation
-            initial_rotation=90,
-            init_translation=dart_translation_up,
+            pre_translation_rotation=90,
+            translation=dart_translation_up,
+            post_translation_rotation=36 + i * 72,
         )
         for i in range(5)
     ]
