@@ -55,8 +55,9 @@ def test_square_tile():
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    first_tile = get_rhombus_vertices((0.0, 0.5), 90, 72)
-    second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
+    first_tile = get_rhombus_vertices((0.0, 0.5), 0, 108)
+    second_tile = get_rhombus_vertices((0.0, 0.5), 72, 108)
+    # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
 
     plot_shapes([
         first_tile,
