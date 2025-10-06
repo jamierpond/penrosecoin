@@ -79,11 +79,6 @@ def get_rhombus_vertices(
     return vertices
 
 
-def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
-    alpha = acute_angle / 2
-    return 0.5 / np.cos(np.radians(alpha))
-
-
 def get_penrose_coin_shapes(
     scale_factor: float = 0.85,
 ) -> Tuple[np.ndarray, List[np.ndarray], List[np.ndarray]]:
@@ -95,6 +90,10 @@ def get_penrose_coin_shapes(
 
     # Translate the Kites up so their tips are at the origin
     KITE_TRANSLATION_UP = (0.0, 0.5)
+
+    def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
+        alpha = acute_angle / 2
+        return 0.5 / np.cos(np.radians(alpha))
 
     # The long side of the dart, tip to tip.
     kite_edge_length = calculate_edge_length_of_unit_height_rhombus(KITE_ACUTE_ANGLE)

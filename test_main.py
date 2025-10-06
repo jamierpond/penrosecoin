@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from typing import List
 from main import (
-    calculate_edge_length_of_unit_height_rhombus,
     get_penrose_coin_shapes,
 )
 
@@ -68,24 +67,15 @@ def plot_shapes(
     plt.close()
 
 
-def test_calculate_edge_length_of_unit_height_rhombus():
-    """Test the calculation of edge length for a rhombus with unit height"""
-    acute_angle = 72
-    edge_length = calculate_edge_length_of_unit_height_rhombus(acute_angle)
-    print(
-        f"Edge length for rhombus with {acute_angle}° acute angle and unit height: {edge_length}"
-    )
-    # Expected value can be calculated or looked up; here we just check it's positive
-    assert edge_length > 0
-
-    # probs todo more actual test lol
-
-
 def test_draw_square():
     decagon, kites, darts = get_penrose_coin_shapes(scale_factor=0.85)
 
     plot_shapes(
-        decagon, kites, darts, filename="test_square.png", title="Penrose Coin Center"
+        decagon,
+        kites,
+        darts,
+        filename="test_square.png",
+        title="Penrose Coin Center",
     )
 
     first_tile = kites[0]  # first kite
