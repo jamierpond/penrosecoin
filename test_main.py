@@ -93,7 +93,11 @@ def test_draw_square():
     dart_long_length = 2 * edge_length * np.cos(np.radians(st_acute_angle / 2))  # long edge of dart
     dart_sf = dart_long_length * scale_factor
 
-    first_dart = get_rhombus_vertices((0.0, 0.85), 36, 144, scale_factor=dart_sf, initial_rotation=90)
+    half_width_dart = edge_length * np.sin(np.radians(st_acute_angle / 2))
+    dart_center = edge_length + half_width_dart
+    print(f"dart_center: {dart_center}")
+
+    first_dart = get_rhombus_vertices((0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90)
 
     print(f"Edge length for rhombus with 108° acute angle and unit height: {edge_length}")
 
