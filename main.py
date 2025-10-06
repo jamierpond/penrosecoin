@@ -84,8 +84,10 @@ def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
     return 0.5 / np.cos(np.radians(alpha))
 
 
-def get_penrose_coin_shapes(scale_factor: float = 0.85) -> Tuple[np.ndarray, List[np.ndarray], List[np.ndarray]]:
-    # Check the math, yo.
+def get_penrose_coin_shapes(
+    scale_factor: float = 0.85,
+) -> Tuple[np.ndarray, List[np.ndarray], List[np.ndarray]]:
+    # Check the math, yo.
     KITE_ACUTE_ANGLE = 72
     DART_ACUTE_ANGLE = 36
     KITE_OBTUSE_ANGLE = 180 - KITE_ACUTE_ANGLE
@@ -96,9 +98,7 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> Tuple[np.ndarray, Lis
 
     # The long side of the dart, tip to tip.
     kite_edge_length = calculate_edge_length_of_unit_height_rhombus(KITE_ACUTE_ANGLE)
-    dart_height = (
-        2 * kite_edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))
-    )
+    dart_height = 2 * kite_edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))
 
     dart_sf = dart_height * scale_factor
     half_width_dart = kite_edge_length * np.sin(np.radians(DART_ACUTE_ANGLE / 2))
@@ -110,7 +110,8 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> Tuple[np.ndarray, Lis
             KITE_OBTUSE_ANGLE,
             scale_factor=scale_factor,
             init_translation=KITE_TRANSLATION_UP,
-        ) for i in range(5)
+        )
+        for i in range(5)
     ]
 
     # The darts need to be translated up so their center is at the height of
@@ -125,7 +126,8 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> Tuple[np.ndarray, Lis
             # long axis is horizontal before rotation
             initial_rotation=90,
             init_translation=dart_translation_up,
-        ) for i in range(5)
+        )
+        for i in range(5)
     ]
 
     # Create decagon background (drawn first, so it appears behind)
