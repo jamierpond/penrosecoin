@@ -5,10 +5,12 @@ from typing import Tuple, List
 def rotate_shape_about_origin(vertices: np.ndarray, angle: float) -> np.ndarray:
     """Rotate vertices about the origin by the given angle in degrees"""
     angle_rad = np.radians(angle)
-    rotation = np.array([
-        [np.cos(angle_rad), -np.sin(angle_rad)],
-        [np.sin(angle_rad), np.cos(angle_rad)]
-    ])
+    rotation = np.array(
+        [
+            [np.cos(angle_rad), -np.sin(angle_rad)],
+            [np.sin(angle_rad), np.cos(angle_rad)],
+        ]
+    )
     return vertices @ rotation.T
 
 
@@ -23,10 +25,9 @@ def get_decagon_vertices(
     # Start with first vertex at top (90 degrees)
     angles = angles + np.pi / 2
 
-    vertices = np.array([
-        [np.cos(angle), np.sin(angle)]
-        for angle in angles
-    ]) * scale_factor
+    vertices = (
+        np.array([[np.cos(angle), np.sin(angle)] for angle in angles]) * scale_factor
+    )
 
     center_array = np.array(center)
     vertices += center_array
@@ -51,12 +52,14 @@ def get_rhombus_vertices(
     d2 = edge_length * np.sin(np.radians(acute_angle / 2))
 
     # Canonical rhombus with long diagonal on x-axis
-    vertices = np.array([
-        [d1, 0],      # Right (obtuse)
-        [0, d2],      # Top (acute)
-        [-d1, 0],     # Left (obtuse)
-        [0, -d2],     # Bottom (acute)
-    ])
+    vertices = np.array(
+        [
+            [d1, 0],  # Right (obtuse)
+            [0, d2],  # Top (acute)
+            [-d1, 0],  # Left (obtuse)
+            [0, -d2],  # Bottom (acute)
+        ]
+    )
 
     # Normalize vertical height (before rotation)
     actual_height = 2 * d2  # vertical height of unrotated rhombus
@@ -87,25 +90,47 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
 
     DART_ACUTE_ANGLE = 36
 
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
+    first_tile = get_rhombus_vertices(
+        (0.0, 0.5), 0, KITE_OBTUSE_ANGLE, scale_factor=scale_factor
+    )
+    second_tile = get_rhombus_vertices(
+        (0.0, 0.5), 72, KITE_OBTUSE_ANGLE, scale_factor=scale_factor
+    )
+    third_tile = get_rhombus_vertices(
+        (0.0, 0.5), 144, KITE_OBTUSE_ANGLE, scale_factor=scale_factor
+    )
+    fourth_tile = get_rhombus_vertices(
+        (0.0, 0.5), 216, KITE_OBTUSE_ANGLE, scale_factor=scale_factor
+    )
+    fifth_tile = get_rhombus_vertices(
+        (0.0, 0.5), 288, KITE_OBTUSE_ANGLE, scale_factor=scale_factor
+    )
 
     edge_length = calculate_edge_length_of_unit_height_rhombus(KITE_ACUTE_ANGLE)
 
-    dart_long_length = 2 * edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))  # long edge of dart
+    dart_long_length = (
+        2 * edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))
+    )  # long edge of dart
     dart_sf = dart_long_length * scale_factor
 
     half_width_dart = edge_length * np.sin(np.radians(DART_ACUTE_ANGLE / 2))
     dart_center = edge_length + half_width_dart
 
-    first_dart = get_rhombus_vertices((0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90)
-    second_dart = get_rhombus_vertices((0.0, dart_center), 108, 144, scale_factor=dart_sf, initial_rotation=90)
-    third_dart = get_rhombus_vertices((0.0, dart_center), 180, 144, scale_factor=dart_sf, initial_rotation=90)
-    fourth_dart = get_rhombus_vertices((0.0, dart_center), 252, 144, scale_factor=dart_sf, initial_rotation=90)
-    fifth_dart = get_rhombus_vertices((0.0, dart_center), 324, 144, scale_factor=dart_sf, initial_rotation=90)
+    first_dart = get_rhombus_vertices(
+        (0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90
+    )
+    second_dart = get_rhombus_vertices(
+        (0.0, dart_center), 108, 144, scale_factor=dart_sf, initial_rotation=90
+    )
+    third_dart = get_rhombus_vertices(
+        (0.0, dart_center), 180, 144, scale_factor=dart_sf, initial_rotation=90
+    )
+    fourth_dart = get_rhombus_vertices(
+        (0.0, dart_center), 252, 144, scale_factor=dart_sf, initial_rotation=90
+    )
+    fifth_dart = get_rhombus_vertices(
+        (0.0, dart_center), 324, 144, scale_factor=dart_sf, initial_rotation=90
+    )
 
     # Create decagon background (drawn first, so it appears behind)
     # the outer radius should be half the pipe width
@@ -115,19 +140,16 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
     return [
         # decagon background
         decagon,
-
-        # kites
+        # kites
         first_tile,
         second_tile,
         third_tile,
         fourth_tile,
         fifth_tile,
-
-        # darts
+        # darts
         first_dart,
         second_dart,
         third_dart,
         fourth_dart,
         fifth_dart,
     ]
-
