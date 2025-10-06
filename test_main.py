@@ -12,7 +12,7 @@ def plot_shapes(
     kites: List[np.ndarray],
     darts: List[np.ndarray],
     filename: str = "test_output.png",
-    title: str = "Shapes"
+    title: str = "Shapes",
 ):
     """Helper function to plot decagon, kites, and darts"""
     plt.figure(figsize=(6, 6))
@@ -84,7 +84,9 @@ def test_calculate_edge_length_of_unit_height_rhombus():
 def test_draw_square():
     decagon, kites, darts = get_penrose_coin_shapes(scale_factor=0.85)
 
-    plot_shapes(decagon, kites, darts, filename="test_square.png", title="Penrose Coin Center")
+    plot_shapes(
+        decagon, kites, darts, filename="test_square.png", title="Penrose Coin Center"
+    )
 
     first_tile = kites[0]  # first kite
     assert first_tile.shape == (4, 2)
