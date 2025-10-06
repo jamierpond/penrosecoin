@@ -8,9 +8,13 @@ from main import (
 
 
 def plot_shapes(
-    shapes: List[np.ndarray], filename: str = "test_output.png", title: str = "Shapes"
+    decagon: np.ndarray,
+    kites: List[np.ndarray],
+    darts: List[np.ndarray],
+    filename: str = "test_output.png",
+    title: str = "Shapes"
 ):
-    """Helper function to plot multiple shapes from vertex arrays"""
+    """Helper function to plot decagon, kites, and darts"""
     plt.figure(figsize=(6, 6))
 
     # Pastel colors for shapes (non-transparent)
@@ -27,13 +31,21 @@ def plot_shapes(
         "#C7E9C0",  # Light green
     ]
 
-    for i, vertices in enumerate(shapes):
-        # First shape (decagon) is dark grey
-        if i == 0:
-            color = "#3A3A3A"
-        else:
-            # Use pastel colors for other shapes
-            color = pastel_colors[(i - 1) % len(pastel_colors)]
+    # Plot decagon in dark grey
+    closed_vertices = np.vstack([decagon, decagon[0]])
+    plt.fill(
+        closed_vertices[:, 0],
+        closed_vertices[:, 1],
+        color="#3A3A3A",
+        alpha=1.0,
+        edgecolor="none",
+    )
+
+    # Plot kites and darts with pastel colors
+    color_idx = 0
+    for vertices in kites + darts:
+        color = pastel_colors[color_idx % len(pastel_colors)]
+        color_idx += 1
 
         # Close the polygon by appending first vertex
         closed_vertices = np.vstack([vertices, vertices[0]])
@@ -71,9 +83,8 @@ def test_calculate_edge_length_of_unit_height_rhombus():
 
 def test_draw_square():
     decagon, kites, darts = get_penrose_coin_shapes(scale_factor=0.85)
-    shapes = [decagon] + kites + darts
 
-    plot_shapes(shapes, filename="test_square.png", title="Penrose Coin Center")
+    plot_shapes(decagon, kites, darts, filename="test_square.png", title="Penrose Coin Center")
 
     first_tile = kites[0]  # first kite
     assert first_tile.shape == (4, 2)
