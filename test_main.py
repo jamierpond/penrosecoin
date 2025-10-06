@@ -56,12 +56,8 @@ def test_square_tile():
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    vertices = get_rhombus_vertices((0, 0), 90, 72)
-    print("Vertices:\n", vertices)
-    top = vertices[1]
-    bottom = vertices[3]
-    distance = np.linalg.norm(top - bottom)
-    print("Distance between top and bottom vertices (should be 1):", distance)
+    vertices = get_rhombus_vertices((0, 0.5), 90, 72)
+
 
     plot_shapes([vertices], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
 
