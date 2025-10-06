@@ -10,10 +10,14 @@ def plot_shapes(shapes: List[np.ndarray], filename: str = 'test_output.png', tit
     """Helper function to plot multiple shapes from vertex arrays"""
     plt.figure(figsize=(6, 6))
 
-    for vertices in shapes:
+    for i, vertices in enumerate(shapes):
+        # Generate deterministic random color based on index
+        rng = np.random.RandomState(i)
+        color = rng.rand(3)  # RGB values between 0 and 1
+
         # Close the polygon by appending first vertex
         closed_vertices = np.vstack([vertices, vertices[0]])
-        plt.fill(closed_vertices[:, 0], closed_vertices[:, 1], 'blue', alpha=0.3)
+        plt.fill(closed_vertices[:, 0], closed_vertices[:, 1], color=color, alpha=0.3, edgecolor='none')
 
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
@@ -57,11 +61,18 @@ def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
     first_tile = get_rhombus_vertices((0.0, 0.5), 0, 108)
     second_tile = get_rhombus_vertices((0.0, 0.5), 72, 108)
+    third_tile = get_rhombus_vertices((0.0, 0.5), 144, 108)
+    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, 108)
+    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, 108)
+
     # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
 
     plot_shapes([
         first_tile,
         second_tile,
+        third_tile,
+        fourth_tile,
+        fifth_tile,
     ], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
 
     assert first_tile.shape == (4, 2)
