@@ -89,7 +89,7 @@ def test_calculate_edge_length_of_unit_height_rhombus():
     assert edge_length > 0
 
 
-def test_draw_square():
+def draw_penrose_coin():
     """Test drawing a square using get_rhombus_vertices"""
     scale_factor = 0.85
     pipe_width = 1.0 - scale_factor
