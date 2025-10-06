@@ -1,8 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.patches import Polygon
-from dataclasses import dataclass
-from typing import List, Tuple
+from typing import Tuple
 
 
 def get_rhombus_vertices(
@@ -32,17 +29,28 @@ def get_rhombus_vertices(
     height_scale = height / actual_height
     vertices *= height_scale
 
+# Leave this commented out for now
+#     # Rotate around origin
+#     angle_rad = np.radians(angle)
+#     rotation = np.array([
+#             [np.cos(angle_rad), -np.sin(angle_rad)],
+#             [np.sin(angle_rad), np.cos(angle_rad)]
+#     ])
+#     vertices = vertices @ rotation.T
+
     # Translate to center
     center_array = np.array(center)
     vertices += center_array
 
-    # Rotate around center of ORIGIN TO DO UPDATE
+    # we need an additional rotation about the origin here by `angle`
+    # TODO
+
     angle_rad = np.radians(angle)
     rotation = np.array([
             [np.cos(angle_rad), -np.sin(angle_rad)],
             [np.sin(angle_rad), np.cos(angle_rad)]
     ])
-    vertices = (vertices - center_array) @ rotation.T + center_array
+    vertices = vertices @ rotation.T
 
     return vertices
 
