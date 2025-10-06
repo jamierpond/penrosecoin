@@ -24,9 +24,11 @@ def get_decagon_vertices(
 
     # Start with first vertex at top (90 degrees)
     angles = angles + np.pi / 2
-
     vertices = (
-        np.array([[np.cos(angle), np.sin(angle)] for angle in angles]) * scale_factor
+        np.array([
+            [np.cos(angle),
+             np.sin(angle)] for angle in angles
+        ]) * scale_factor
     )
 
     center_array = np.array(center)
