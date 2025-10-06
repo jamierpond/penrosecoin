@@ -73,7 +73,7 @@ def test_calculate_edge_length_of_unit_height_rhombus():
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    scale_factor = 1.0
+    scale_factor = 0.9
 
     ft_acute_angle = 72
     ft_obtuse_angle = 180 - ft_acute_angle  # 108 degrees
@@ -98,6 +98,10 @@ def test_draw_square():
     print(f"dart_center: {dart_center}")
 
     first_dart = get_rhombus_vertices((0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90)
+    second_dart = get_rhombus_vertices((0.0, dart_center), 108, 144, scale_factor=dart_sf, initial_rotation=90)
+    third_dart = get_rhombus_vertices((0.0, dart_center), 180, 144, scale_factor=dart_sf, initial_rotation=90)
+    fourth_dart = get_rhombus_vertices((0.0, dart_center), 252, 144, scale_factor=dart_sf, initial_rotation=90)
+    fifth_dart = get_rhombus_vertices((0.0, dart_center), 324, 144, scale_factor=dart_sf, initial_rotation=90)
 
     print(f"Edge length for rhombus with 108° acute angle and unit height: {edge_length}")
 
@@ -113,6 +117,11 @@ def test_draw_square():
 
         # darts
         first_dart,
+        second_dart,
+        third_dart,
+        fourth_dart,
+        fifth_dart,
+
     ], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
 
     assert first_tile.shape == (4, 2)
