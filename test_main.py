@@ -98,9 +98,10 @@ def test_calculate_edge_length_of_unit_height_rhombus():
 
 
 def test_draw_square():
-    shapes = get_penrose_coin_shapes(scale_factor=0.85)
-    first_tile = shapes[1]  # first kite
+    decagon, kites, darts = get_penrose_coin_shapes(scale_factor=0.85)
+    shapes = [decagon] + kites + darts
 
     plot_shapes(shapes, filename="test_square.png", title="Penrose Coin Center")
 
+    first_tile = kites[0]  # first kite
     assert first_tile.shape == (4, 2)

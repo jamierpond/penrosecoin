@@ -48,6 +48,7 @@ def get_rhombus_vertices(
 
     # Half-diagonal from center to obtuse vertex
     d1 = edge_length * np.cos(np.radians(acute_angle / 2))
+
     # Half-diagonal from center to acute vertex
     d2 = edge_length * np.sin(np.radians(acute_angle / 2))
 
@@ -83,7 +84,7 @@ def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
     return 0.5 / np.cos(np.radians(alpha))
 
 
-def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
+def get_penrose_coin_shapes(scale_factor: float = 0.85) -> Tuple[np.ndarray, List[np.ndarray], List[np.ndarray]]:
     # Check the math, yo.
     KITE_ACUTE_ANGLE = 72
     DART_ACUTE_ANGLE = 36
@@ -98,61 +99,38 @@ def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
     dart_height = (
         2 * kite_edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))
     )
+
     dart_sf = dart_height * scale_factor
     half_width_dart = kite_edge_length * np.sin(np.radians(DART_ACUTE_ANGLE / 2))
     dart_center = kite_edge_length + half_width_dart
 
-    # The darts need to be translated up so their center is at the height of
-    # the kite tips.
-    dart_translation_up = (0.0, dart_center)
-
-    kites = []
-    for i in range(5):
-        kite = get_rhombus_vertices(
+    kites = [
+        get_rhombus_vertices(
             i * 72,
             KITE_OBTUSE_ANGLE,
             scale_factor=scale_factor,
             init_translation=KITE_TRANSLATION_UP,
-        )
-        kites.append(kite)
+        ) for i in range(5)
+    ]
 
-
-
-#     first_dart = get_rhombus_vertices(
-#          36, 144, scale_factor=dart_sf, initial_rotation=90, init_translation=dart_translation_up
-#     )
-#     second_dart = get_rhombus_vertices(
-#          108, 144, scale_factor=dart_sf, initial_rotation=90, init_translation=dart_translation_up
-#     )
-#     third_dart = get_rhombus_vertices(
-#          180, 144, scale_factor=dart_sf, initial_rotation=90, init_translation=dart_translation_up
-#     )
-#     fourth_dart = get_rhombus_vertices(
-#          252, 144, scale_factor=dart_sf, initial_rotation=90, init_translation=dart_translation_up
-#     )
-#     fifth_dart = get_rhombus_vertices(
-#          324, 144, scale_factor=dart_sf, initial_rotation=90, init_translation=dart_translation_up
-#     )
-
-    darts = []
-    for i in range(5):
-        dart = get_rhombus_vertices(
+    # The darts need to be translated up so their center is at the height of
+    # the kite tips.
+    dart_translation_up = (0.0, dart_center)
+    darts = [
+        get_rhombus_vertices(
             36 + i * 72,
             DART_OBTUSE_ANGLE,
             scale_factor=dart_sf,
+            # darts need an initial 90 degrees so their
+            # long axis is horizontal before rotation
             initial_rotation=90,
             init_translation=dart_translation_up,
-        )
-        darts.append(dart)
+        ) for i in range(5)
+    ]
 
     # Create decagon background (drawn first, so it appears behind)
     # the outer radius should be half the pipe width
     decagon_sf = 1.0
     decagon = get_decagon_vertices(center=(0.0, 0.0), scale_factor=decagon_sf)
 
-    return [
-        # decagon background
-        decagon,
-        *kites,
-        *darts,
-    ]
+    return decagon, kites, darts
