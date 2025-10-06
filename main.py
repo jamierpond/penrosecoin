@@ -22,6 +22,7 @@ def get_rhombus_vertices(
     center: Tuple[float, float],
     angle: float,
     acute_angle: float,
+    height: float = 1.0
 ) -> np.ndarray:
     """Calculate vertices for a rhombus with specified acute angle"""
     edge_length = 1.0
@@ -49,6 +50,9 @@ def get_rhombus_vertices(
 
     # Translate
     vertices += np.array(center)
+
+    height_scale = height / (2 * d2)
+    vertices *= height_scale
 
     return vertices
 
