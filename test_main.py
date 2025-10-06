@@ -89,32 +89,25 @@ def test_calculate_edge_length_of_unit_height_rhombus():
     assert edge_length > 0
 
 
-def draw_penrose_coin():
-    """Test drawing a square using get_rhombus_vertices"""
-    scale_factor = 0.85
-    pipe_width = 1.0 - scale_factor
+def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
+    KITE_ACUTE_ANGLE = 72
+    KITE_OBTUSE_ANGLE = 180 - KITE_ACUTE_ANGLE  # 108 degrees
 
-    ft_acute_angle = 72
-    ft_obtuse_angle = 180 - ft_acute_angle  # 108 degrees
+    DART_ACUTE_ANGLE = 36
 
-    st_acute_angle = 36
-    st_obtuse_angle = 180 - st_acute_angle  # 144 degrees
+    first_tile = get_rhombus_vertices((0.0, 0.5), 0, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
+    second_tile = get_rhombus_vertices((0.0, 0.5), 72, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
+    third_tile = get_rhombus_vertices((0.0, 0.5), 144, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
+    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
+    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
 
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, ft_obtuse_angle, scale_factor=scale_factor)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, ft_obtuse_angle, scale_factor=scale_factor)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, ft_obtuse_angle, scale_factor=scale_factor)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, ft_obtuse_angle, scale_factor=scale_factor)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, ft_obtuse_angle, scale_factor=scale_factor)
+    edge_length = calculate_edge_length_of_unit_height_rhombus(KITE_ACUTE_ANGLE)
 
-    edge_length = calculate_edge_length_of_unit_height_rhombus(ft_acute_angle)
-    print(f"edge_length: {edge_length}")
-
-    dart_long_length = 2 * edge_length * np.cos(np.radians(st_acute_angle / 2))  # long edge of dart
+    dart_long_length = 2 * edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))  # long edge of dart
     dart_sf = dart_long_length * scale_factor
 
-    half_width_dart = edge_length * np.sin(np.radians(st_acute_angle / 2))
+    half_width_dart = edge_length * np.sin(np.radians(DART_ACUTE_ANGLE / 2))
     dart_center = edge_length + half_width_dart
-    print(f"dart_center: {dart_center}")
 
     first_dart = get_rhombus_vertices((0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90)
     second_dart = get_rhombus_vertices((0.0, dart_center), 108, 144, scale_factor=dart_sf, initial_rotation=90)
@@ -127,12 +120,11 @@ def draw_penrose_coin():
     decagon_sf = 1.0
     decagon = get_decagon_vertices(center=(0.0, 0.0), scale_factor=decagon_sf)
 
-    # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
-
-    plot_shapes([
-        # kites
+    return [
+        # decagon background
         decagon,
 
+        # kites
         first_tile,
         second_tile,
         third_tile,
@@ -145,7 +137,13 @@ def draw_penrose_coin():
         third_dart,
         fourth_dart,
         fifth_dart,
+    ]
 
-    ], filename='test_square.png', title='Penrose Coin Center')
+
+def test_draw_square():
+    shapes = get_penrose_coin_shapes(scale_factor=0.85)
+    first_tile = shapes[1]  # first kite
+
+    plot_shapes(shapes, filename='test_square.png', title='Penrose Coin Center')
 
     assert first_tile.shape == (4, 2)
