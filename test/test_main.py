@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 from typing import List
 from main import (
     get_rhombus_vertices,
-    get_decagon_vertices,
+    calculate_edge_length_of_unit_height_rhombus,
+    get_penrose_coin_shapes,
 )
 
 
@@ -75,9 +76,6 @@ def test_square_tile():
     np.testing.assert_array_almost_equal(first_tile, expected_vertices, decimal=5)
 
 
-def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
-    alpha = acute_angle / 2
-    return 0.5 / np.cos(np.radians(alpha))
 
 
 def test_calculate_edge_length_of_unit_height_rhombus():
@@ -88,56 +86,6 @@ def test_calculate_edge_length_of_unit_height_rhombus():
     # Expected value can be calculated or looked up; here we just check it's positive
     assert edge_length > 0
 
-
-def get_penrose_coin_shapes(scale_factor: float = 0.85) -> List[np.ndarray]:
-    KITE_ACUTE_ANGLE = 72
-    KITE_OBTUSE_ANGLE = 180 - KITE_ACUTE_ANGLE  # 108 degrees
-
-    DART_ACUTE_ANGLE = 36
-
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, KITE_OBTUSE_ANGLE, scale_factor=scale_factor)
-
-    edge_length = calculate_edge_length_of_unit_height_rhombus(KITE_ACUTE_ANGLE)
-
-    dart_long_length = 2 * edge_length * np.cos(np.radians(DART_ACUTE_ANGLE / 2))  # long edge of dart
-    dart_sf = dart_long_length * scale_factor
-
-    half_width_dart = edge_length * np.sin(np.radians(DART_ACUTE_ANGLE / 2))
-    dart_center = edge_length + half_width_dart
-
-    first_dart = get_rhombus_vertices((0.0, dart_center), 36, 144, scale_factor=dart_sf, initial_rotation=90)
-    second_dart = get_rhombus_vertices((0.0, dart_center), 108, 144, scale_factor=dart_sf, initial_rotation=90)
-    third_dart = get_rhombus_vertices((0.0, dart_center), 180, 144, scale_factor=dart_sf, initial_rotation=90)
-    fourth_dart = get_rhombus_vertices((0.0, dart_center), 252, 144, scale_factor=dart_sf, initial_rotation=90)
-    fifth_dart = get_rhombus_vertices((0.0, dart_center), 324, 144, scale_factor=dart_sf, initial_rotation=90)
-
-    # Create decagon background (drawn first, so it appears behind)
-    # the outer radius should be half the pipe width
-    decagon_sf = 1.0
-    decagon = get_decagon_vertices(center=(0.0, 0.0), scale_factor=decagon_sf)
-
-    return [
-        # decagon background
-        decagon,
-
-        # kites
-        first_tile,
-        second_tile,
-        third_tile,
-        fourth_tile,
-        fifth_tile,
-
-        # darts
-        first_dart,
-        second_dart,
-        third_dart,
-        fourth_dart,
-        fifth_dart,
-    ]
 
 
 def test_draw_square():
