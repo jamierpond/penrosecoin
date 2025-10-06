@@ -59,20 +59,32 @@ def test_square_tile():
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, 108)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, 108)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, 108)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, 108)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, 108)
+    scale_factor = 1.0
+    first_tile = get_rhombus_vertices((0.0, 0.5), 0, 108, scale_factor=scale_factor)
+    second_tile = get_rhombus_vertices((0.0, 0.5), 72, 108, scale_factor=scale_factor)
+    third_tile = get_rhombus_vertices((0.0, 0.5), 144, 108, scale_factor=scale_factor)
+    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, 108, scale_factor=scale_factor)
+    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, 108, scale_factor=scale_factor)
+
+    dart_hypotenuse = first_tile[0, 0] - first_tile[2, 0]
+    print(f"dart_hypotenuse: {dart_hypotenuse}")
+    dart_height = np.sin(np.radians(72))
+
+    # now the darts
+    first_dart = get_rhombus_vertices((0, 1.0), 144, 144, scale_factor=dart_height)
 
     # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
 
     plot_shapes([
+        # kites
         first_tile,
         second_tile,
         third_tile,
         fourth_tile,
         fifth_tile,
+
+        # darts
+        first_dart,
     ], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
 
     assert first_tile.shape == (4, 2)
