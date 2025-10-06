@@ -11,14 +11,31 @@ def plot_shapes(shapes: List[np.ndarray], filename: str = 'test_output.png', tit
     """Helper function to plot multiple shapes from vertex arrays"""
     plt.figure(figsize=(6, 6))
 
+    # Pastel colors for shapes (non-transparent)
+    pastel_colors = [
+        '#FFB3BA',  # Light pink
+        '#BFDBFE',  # Light blue
+        '#BAE1D3',  # Light mint
+        '#E0BBE4',  # Light lavender
+        '#FFE4B5',  # Light peach
+        '#D4F1F4',  # Light cyan
+        '#F4D4BA',  # Light tan
+        '#D4BAF4',  # Light purple
+        '#FFF5BA',  # Light yellow
+        '#C7E9C0',  # Light green
+    ]
+
     for i, vertices in enumerate(shapes):
-        # Generate deterministic random color based on index
-        rng = np.random.RandomState(i)
-        color = rng.rand(3)  # RGB values between 0 and 1
+        # First shape (decagon) is dark grey
+        if i == 0:
+            color = '#3A3A3A'
+        else:
+            # Use pastel colors for other shapes
+            color = pastel_colors[(i - 1) % len(pastel_colors)]
 
         # Close the polygon by appending first vertex
         closed_vertices = np.vstack([vertices, vertices[0]])
-        plt.fill(closed_vertices[:, 0], closed_vertices[:, 1], color=color, alpha=0.3, edgecolor='none')
+        plt.fill(closed_vertices[:, 0], closed_vertices[:, 1], color=color, alpha=1.0, edgecolor='none')
 
     plt.xlim(-1, 1)
     plt.ylim(-1, 1)
