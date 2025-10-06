@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from typing import List
 from main import (
     get_rhombus_vertices,
+    get_decagon_vertices,
 )
 
 
@@ -73,7 +74,8 @@ def test_calculate_edge_length_of_unit_height_rhombus():
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    scale_factor = 0.9
+    scale_factor = 0.8
+    pipe_width = 1.0 - scale_factor
 
     ft_acute_angle = 72
     ft_obtuse_angle = 180 - ft_acute_angle  # 108 degrees
@@ -103,12 +105,17 @@ def test_draw_square():
     fourth_dart = get_rhombus_vertices((0.0, dart_center), 252, 144, scale_factor=dart_sf, initial_rotation=90)
     fifth_dart = get_rhombus_vertices((0.0, dart_center), 324, 144, scale_factor=dart_sf, initial_rotation=90)
 
-    print(f"Edge length for rhombus with 108° acute angle and unit height: {edge_length}")
+    # Create decagon background (drawn first, so it appears behind)
+    # the outer radius should be half the pipe width
+    decagon_sf = scale_factor + (pipe_width)
+    decagon = get_decagon_vertices(center=(0.0, 0.0), scale_factor=decagon_sf)
 
     # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
 
     plot_shapes([
         # kites
+        decagon,
+
         first_tile,
         second_tile,
         third_tile,

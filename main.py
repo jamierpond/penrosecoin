@@ -12,6 +12,28 @@ def rotate_shape_about_origin(vertices: np.ndarray, angle: float) -> np.ndarray:
     return vertices @ rotation.T
 
 
+def get_decagon_vertices(
+    center: Tuple[float, float] = (0.0, 0.0),
+    scale_factor: float = 1.0,
+) -> np.ndarray:
+    """Generate vertices for a unit regular decagon (10-sided polygon)"""
+    n_sides = 10
+    angles = np.linspace(0, 2 * np.pi, n_sides, endpoint=False)
+
+    # Start with first vertex at top (90 degrees)
+    angles = angles + np.pi / 2
+
+    vertices = np.array([
+        [np.cos(angle), np.sin(angle)]
+        for angle in angles
+    ]) * scale_factor
+
+    center_array = np.array(center)
+    vertices += center_array
+
+    return vertices
+
+
 def get_rhombus_vertices(
     center: Tuple[float, float],
     angle: float,
