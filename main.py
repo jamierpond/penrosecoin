@@ -40,21 +40,22 @@ def get_rhombus_vertices(
         [0, -d2],     # Bottom (acute)
     ])
 
-    # Rotate
+    # Normalize vertical height (before rotation)
+    actual_height = 2 * d2  # vertical height of unrotated rhombus
+    height_scale = height / actual_height
+    vertices *= height_scale
+
+    # Translate to center
+    center_array = np.array(center)
+    vertices += center_array
+
+    # Rotate around center
     angle_rad = np.radians(angle)
     rotation = np.array([
         [np.cos(angle_rad), -np.sin(angle_rad)],
         [np.sin(angle_rad), np.cos(angle_rad)]
     ])
-    vertices = vertices @ rotation.T
-
-    # Calculate actual height after rotation
-    actual_height = vertices[:, 1].max() - vertices[:, 1].min()
-    height_scale = height / actual_height
-    vertices *= height_scale
-
-    # Translate
-    vertices += np.array(center)
+    vertices = (vertices - center_array) @ rotation.T + center_array
 
     return vertices
 

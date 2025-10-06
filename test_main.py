@@ -29,14 +29,14 @@ def plot_shapes(shapes: List[np.ndarray], filename: str = 'test_output.png', tit
 def test_square_tile():
     """Test creating a square tile using get_rhombus_vertices with 90° acute angle"""
     # A rhombus with 90° acute angle is a square
-    vertices = get_rhombus_vertices((0, 0), 0, 90)
+    first_tile = get_rhombus_vertices((0, 0), 0, 90)
 
     # Check we have 4 vertices
-    assert vertices.shape == (4, 2)
-    print(vertices)
+    assert first_tile.shape == (4, 2)
+    print(first_tile)
 
     # Check it's centered at origin
-    centroid = vertices.mean(axis=0)
+    centroid = first_tile.mean(axis=0)
     np.testing.assert_array_almost_equal(centroid, [0, 0])
 
     # For a square with edge_length = 1 and 90° acute angle:
@@ -50,14 +50,18 @@ def test_square_tile():
         [0, -expected_half_diag]
     ])
 
-    np.testing.assert_array_almost_equal(vertices, expected_vertices, decimal=5)
+    np.testing.assert_array_almost_equal(first_tile, expected_vertices, decimal=5)
 
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
-    vertices = get_rhombus_vertices((0, 0.5), 90, 72)
+    first_tile = get_rhombus_vertices((0.0, 0.5), 90, 72)
 
+    # second_tile = get_rhombus_vertices((0, 0.5), 90 + 5, 72)
 
-    plot_shapes([vertices], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
+    plot_shapes([
+        first_tile,
+        # second_tile,
+    ], filename='test_square.png', title='Square from get_rhombus_vertices (90°)')
 
-    assert vertices.shape == (4, 2)
+    assert first_tile.shape == (4, 2)
