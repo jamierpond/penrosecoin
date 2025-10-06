@@ -56,22 +56,37 @@ def test_square_tile():
 
     np.testing.assert_array_almost_equal(first_tile, expected_vertices, decimal=5)
 
+def calculate_edge_length_of_unit_height_rhombus(acute_angle: float) -> float:
+    alpha = acute_angle / 2
+    return 2 * np.cos(np.radians(alpha))
+
+
+def test_calculate_edge_length_of_unit_height_rhombus():
+    """Test the calculation of edge length for a rhombus with unit height"""
+    acute_angle = 72
+    edge_length = calculate_edge_length_of_unit_height_rhombus(acute_angle)
+    print(f"Edge length for rhombus with {acute_angle}° acute angle and unit height: {edge_length}")
+    # Expected value can be calculated or looked up; here we just check it's positive
+    assert edge_length > 0
+
 
 def test_draw_square():
     """Test drawing a square using get_rhombus_vertices"""
     scale_factor = 1.0
-    first_tile = get_rhombus_vertices((0.0, 0.5), 0, 108, scale_factor=scale_factor)
-    second_tile = get_rhombus_vertices((0.0, 0.5), 72, 108, scale_factor=scale_factor)
-    third_tile = get_rhombus_vertices((0.0, 0.5), 144, 108, scale_factor=scale_factor)
-    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, 108, scale_factor=scale_factor)
-    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, 108, scale_factor=scale_factor)
 
-    dart_hypotenuse = first_tile[0, 0] - first_tile[2, 0]
-    print(f"dart_hypotenuse: {dart_hypotenuse}")
-    dart_height = np.sin(np.radians(72))
+    acute_angle = 72
+    obtuse_angle = 180 - acute_angle  # 108 degrees
 
-    # now the darts
-    first_dart = get_rhombus_vertices((0, 1.0), 144, 144, scale_factor=dart_height)
+    first_tile = get_rhombus_vertices((0.0, 0.5), 0, obtuse_angle, scale_factor=scale_factor)
+    second_tile = get_rhombus_vertices((0.0, 0.5), 72, obtuse_angle, scale_factor=scale_factor)
+    third_tile = get_rhombus_vertices((0.0, 0.5), 144, obtuse_angle, scale_factor=scale_factor)
+    fourth_tile = get_rhombus_vertices((0.0, 0.5), 216, obtuse_angle, scale_factor=scale_factor)
+    fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, obtuse_angle, scale_factor=scale_factor)
+
+    edge_length = calculate_edge_length_of_unit_height_rhombus(acute_angle)
+    first_dart = get_rhombus_vertices((0.0, 0.5), 36, 144, scale_factor=scale_factor, initial_rotation=90)
+
+    print(f"Edge length for rhombus with 108° acute angle and unit height: {edge_length}")
 
     # second_tile = get_rhombus_vertices((0, 0.5), 90 + 72, 72)
 

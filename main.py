@@ -17,6 +17,7 @@ def get_rhombus_vertices(
     angle: float,
     acute_angle: float,
     height: float = 1.0,
+    initial_rotation: float = 0.0,
     scale_factor: float = 1.0,
 ) -> np.ndarray:
     """Calculate vertices for a rhombus with specified acute angle"""
@@ -39,6 +40,8 @@ def get_rhombus_vertices(
     actual_height = 2 * d2  # vertical height of unrotated rhombus
     height_scale = height / actual_height
     vertices *= height_scale * scale_factor
+
+    vertices = rotate_shape_about_origin(vertices, initial_rotation)
 
     # Translate to center
     center_array = np.array(center)
