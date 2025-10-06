@@ -48,11 +48,13 @@ def get_rhombus_vertices(
     ])
     vertices = vertices @ rotation.T
 
+    # Calculate actual height after rotation
+    actual_height = vertices[:, 1].max() - vertices[:, 1].min()
+    height_scale = height / actual_height
+    vertices *= height_scale
+
     # Translate
     vertices += np.array(center)
-
-    height_scale = height / (2 * d2)
-    vertices *= height_scale
 
     return vertices
 

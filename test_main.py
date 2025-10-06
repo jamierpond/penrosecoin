@@ -13,7 +13,6 @@ def plot_shapes(shapes: List[np.ndarray], filename: str = 'test_output.png', tit
     for vertices in shapes:
         # Close the polygon by appending first vertex
         closed_vertices = np.vstack([vertices, vertices[0]])
-        plt.plot(closed_vertices[:, 0], closed_vertices[:, 1], 'b-', linewidth=2)
         plt.fill(closed_vertices[:, 0], closed_vertices[:, 1], 'blue', alpha=0.3)
 
     plt.xlim(-1, 1)
