@@ -84,7 +84,12 @@ def test_draw_square():
     fifth_tile = get_rhombus_vertices((0.0, 0.5), 288, obtuse_angle, scale_factor=scale_factor)
 
     edge_length = calculate_edge_length_of_unit_height_rhombus(acute_angle)
-    first_dart = get_rhombus_vertices((0.0, 0.5), 36, 144, scale_factor=scale_factor, initial_rotation=90)
+
+
+    dart_long_length = edge_length * np.cos(np.radians(acute_angle / 2))
+    dart_sf = dart_long_length * scale_factor
+
+    first_dart = get_rhombus_vertices((0.0, 0.85), 36, 144, scale_factor=dart_sf, initial_rotation=90)
 
     print(f"Edge length for rhombus with 108° acute angle and unit height: {edge_length}")
 
