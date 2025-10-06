@@ -18,20 +18,18 @@ class TileParams:
     edge_width: float = 0.0
 
 
-def get_tile_vertices(
+def get_rhombus_vertices(
     center: Tuple[float, float],
     angle: float,
-    params: TileParams
+    acute_angle: float,
 ) -> np.ndarray:
-    """Calculate vertices for a Penrose tile (fat rhombus)"""
-    # All tiles are fat rhombi: 72° acute angles, 108° obtuse angles
+    """Calculate vertices for a rhombus with specified acute angle"""
     edge_length = 1.0
-    acute = 72
 
     # Half-diagonal from center to obtuse vertex
-    d1 = edge_length * np.cos(np.radians(acute / 2))  # cos(36)
+    d1 = edge_length * np.cos(np.radians(acute_angle / 2))
     # Half-diagonal from center to acute vertex
-    d2 = edge_length * np.sin(np.radians(acute / 2))  # sin(36)
+    d2 = edge_length * np.sin(np.radians(acute_angle / 2))
 
     # Canonical rhombus with long diagonal on x-axis
     vertices = np.array([
@@ -40,14 +38,6 @@ def get_tile_vertices(
         [-d1, 0],     # Left (obtuse)
         [0, -d2],     # Bottom (acute)
     ])
-
-    # Apply margin by shrinking towards centroid
-    if params.margin > 0:
-        centroid = vertices.mean(axis=0)
-        vertices = centroid + (vertices - centroid) * (1 - params.margin)
-
-    # Scale
-    vertices *= params.scale
 
     # Rotate
     angle_rad = np.radians(angle)
@@ -63,6 +53,14 @@ def get_tile_vertices(
     return vertices
 
 
+def get_tile_vertices(
+    center: Tuple[float, float],
+    angle: float,
+) -> np.ndarray:
+    """Calculate vertices for a Penrose tile (fat rhombus with 72° acute angles)"""
+    return get_rhombus_vertices(center, angle, 72)
+
+
 def create_tile_polygon(
     tile_type: str,
     center: Tuple[float, float],
@@ -70,7 +68,16 @@ def create_tile_polygon(
     params: TileParams
 ) -> Polygon:
     """Create a matplotlib Polygon for a Penrose tile"""
-    vertices = get_tile_vertices(center, angle, params)
+    vertices = get_tile_vertices(center, angle)
+
+    # Apply margin by shrinking towards centroid
+    if params.margin > 0:
+        centroid = vertices.mean(axis=0)
+        vertices = centroid + (vertices - centroid) * (1 - params.margin)
+
+    # Scale
+    vertices *= params.scale
+
     color_map = {
         'green': params.green_color,
         'red': params.red_color,
@@ -116,7 +123,8 @@ class PenroseCoin:
         # Set aspect and limits - auto-scale based on tiles
         all_vertices = []
         for tile_type, center, angle in self.tiles:
-            vertices = get_tile_vertices(center, angle, self.params)
+            vertices = get_tile_vertices(center, angle)
+            vertices *= self.params.scale
             all_vertices.extend(vertices)
         if all_vertices:
             vertices_array = np.array(all_vertices)
