@@ -94,7 +94,7 @@ def plot_shapes(
 
 
 def test_draw_square():
-    cool_sf = np.sqrt(2) / 2
+    cool_sf = 0.85
     decagon, kites, darts = get_penrose_coin_shapes(scale_factor=cool_sf)
 
     plot_shapes(
