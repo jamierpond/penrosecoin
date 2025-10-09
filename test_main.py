@@ -12,12 +12,24 @@ def plot_shapes(
     darts: List[np.ndarray],
     filename: str = "test_output.png",
     title: str = "Shapes",
+    kite_colors: List[str] | None = None,
+    dart_colors: List[str] | None = None,
 ):
-    """Helper function to plot decagon, kites, and darts"""
+    """Helper function to plot decagon, kites, and darts
+
+    Args:
+        decagon: Vertices for the decagon background
+        kites: List of kite vertices
+        darts: List of dart vertices
+        filename: Output filename
+        title: Plot title
+        kite_colors: List of colors for each kite (one per kite). If None, uses default pastel colors.
+        dart_colors: List of colors for each dart (one per dart). If None, uses default pastel colors.
+    """
     plt.figure(figsize=(6, 6))
 
-    # Pastel colors for shapes (non-transparent)
-    pastel_colors = [
+    # Default pastel colors for shapes (non-transparent)
+    default_pastel_colors = [
         "#FFB3BA",  # Light pink
         "#BFDBFE",  # Light blue
         "#BAE1D3",  # Light mint
@@ -30,6 +42,12 @@ def plot_shapes(
         "#C7E9C0",  # Light green
     ]
 
+    # Use provided colors or default to pastel colors
+    if kite_colors is None:
+        kite_colors = [default_pastel_colors[i % len(default_pastel_colors)] for i in range(len(kites))]
+    if dart_colors is None:
+        dart_colors = [default_pastel_colors[(i + len(kites)) % len(default_pastel_colors)] for i in range(len(darts))]
+
     # Plot decagon in dark grey
     closed_vertices = np.vstack([decagon, decagon[0]])
     plt.fill(
@@ -40,13 +58,21 @@ def plot_shapes(
         edgecolor="none",
     )
 
-    # Plot kites and darts with pastel colors
-    color_idx = 0
-    for vertices in kites + darts:
-        color = pastel_colors[color_idx % len(pastel_colors)]
-        color_idx += 1
+    # Plot kites with their colors
+    for i, vertices in enumerate(kites):
+        color = kite_colors[i % len(kite_colors)]
+        closed_vertices = np.vstack([vertices, vertices[0]])
+        plt.fill(
+            closed_vertices[:, 0],
+            closed_vertices[:, 1],
+            color=color,
+            alpha=1.0,
+            edgecolor="none",
+        )
 
-        # Close the polygon by appending first vertex
+    # Plot darts with their colors
+    for i, vertices in enumerate(darts):
+        color = dart_colors[i % len(dart_colors)]
         closed_vertices = np.vstack([vertices, vertices[0]])
         plt.fill(
             closed_vertices[:, 0],
@@ -68,7 +94,8 @@ def plot_shapes(
 
 
 def test_draw_square():
-    decagon, kites, darts = get_penrose_coin_shapes(scale_factor=0.85)
+    cool_sf = np.sqrt(2) / 2
+    decagon, kites, darts = get_penrose_coin_shapes(scale_factor=cool_sf)
 
     plot_shapes(
         decagon,
