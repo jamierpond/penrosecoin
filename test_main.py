@@ -48,12 +48,12 @@ def plot_shapes(
     if dart_colors is None:
         dart_colors = [default_pastel_colors[(i + len(kites)) % len(default_pastel_colors)] for i in range(len(darts))]
 
-    # Plot decagon in dark grey
+    # Plot decagon background
     closed_vertices = np.vstack([decagon, decagon[0]])
     plt.fill(
         closed_vertices[:, 0],
         closed_vertices[:, 1],
-        color="#3A3A3A",
+        color="#333333",
         alpha=1.0,
         edgecolor="none",
     )
@@ -97,12 +97,20 @@ def test_draw_square():
     cool_sf = 0.85
     decagon, kites, darts = get_penrose_coin_shapes(scale_factor=cool_sf)
 
+    # Colors matching the reference image
+    red = "#FF0000"
+    green = "#00FF00"
+    kite_colors = [green, red, green, green, red]  # Alternating green and red
+    dart_colors = ["#8000FF"] * 5  # All darts are purple
+
     plot_shapes(
         decagon,
         kites,
         darts,
         filename="test_square.png",
         title="Penrose Coin Center",
+        kite_colors=kite_colors,
+        dart_colors=dart_colors,
     )
 
     first_tile = kites[0]  # first kite
